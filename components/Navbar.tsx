@@ -4,6 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+type NavbarProps = {
+  name?: string;
+};
+
 // 1. Data for our links
 const links = [
   { href: "/", label: "Home" },
@@ -13,7 +17,7 @@ const links = [
 ];
 
 // 2. The component itself
-export default function Navbar() {
+export default function Navbar({ name }: NavbarProps) {
   // 3. Get the current URL path (e.g. "/about")
   const pathname = usePathname();
 
@@ -26,7 +30,7 @@ export default function Navbar() {
 
         {/* 5. Logo */}
         <Link href="/" className="text-xl font-bold text-gray-900">
-          MyApp
+          MyApp {name ? `- ${name}` : ""}
         </Link>
 
         {/* 6. Desktop navigation */}

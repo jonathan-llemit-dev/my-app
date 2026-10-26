@@ -42,6 +42,9 @@ export default function Projects() {
           </button>
         </div>
       </div>
+      <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => router.back()}>
+        Go Back
+      </button>
     </div>
   );
 }

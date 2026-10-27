@@ -1,10 +1,23 @@
-// app/(main pages)/projects/view/[slug]/page.tsx
+import { Suspense } from "react";
+import BackButton from "@/components/BackButton";
+
 type PageProps = {
     params: Promise<{ slug: string }>;
     searchParams: Promise<{ description?: string; stars?: string }>;
 };
 
-export default async function ProjectView({ params, searchParams }: PageProps) {
+export default function ProjectView({ params, searchParams }: PageProps) {
+    return (
+        <div>
+            <BackButton />
+            <Suspense fallback={<p>Loading project...</p>}>
+                <ProjectDetails params={params} searchParams={searchParams} />
+            </Suspense>
+        </div>
+    );
+}
+
+async function ProjectDetails({ params, searchParams }: PageProps) {
     const { slug } = await params;
     const { description, stars } = await searchParams;
 

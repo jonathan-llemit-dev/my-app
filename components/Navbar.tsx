@@ -14,6 +14,7 @@ const links = [
   { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
   { href: "/contact", label: "Contact" },
+  { href: "/files/users/documents/reports", label: "Files" },
 ];
 
 // 2. The component itself

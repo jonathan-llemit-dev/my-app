@@ -1,30 +1,19 @@
 // app/(main pages)/projects/view/[slug]/page.tsx
-import { Suspense } from 'react';
+type PageProps = {
+    params: Promise<{ slug: string }>;
+    searchParams: Promise<{ description?: string; stars?: string }>;
+};
 
-// 1. The Page component stays synchronous (or async, but doesn't await params)
-export default function ProjectView({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
-  return (
-    <div>
-      <h2>Welcome to Project View Page!</h2>
-      {/* 2. Wrap the component that needs the slug in Suspense */}
-      <Suspense fallback={<p>Loading project...</p>}>
-        <ProjectDetails params={params} />
-      </Suspense>
-    </div>
-  );
-}
+export default async function ProjectView({ params, searchParams }: PageProps) {
+    const { slug } = await params;
+    const { description, stars } = await searchParams;
 
-// 3. The child component is async and awaits the params inside the boundary
-async function ProjectDetails({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
-  const { slug } = await params;
-  // You can now fetch data using the slug or render it
-  return <p>Viewing project: {slug}</p>;
+    return (
+        <div>
+            <h2>Welcome to Project View Page!</h2>
+            <h3>Project: {slug}</h3>
+            <p>Description: {description ?? "No description provided"}</p>
+            <p>Stars: {stars ?? "0"}</p>
+        </div>
+    );
 }

@@ -14,11 +14,13 @@ type PageProps = {
 
 export default function ProjectView({ params, searchParams }: PageProps) {
     return (
-        <div>
+        <div className="p-6 md:p-10">
             <BackButton />
-            <Suspense fallback={<p>Loading project...</p>}>
-                <ProjectDetails params={params} searchParams={searchParams} />
-            </Suspense>
+            <div className="mx-auto mt-6 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+                <Suspense fallback={<p className="text-slate-500">Loading project...</p>}>
+                    <ProjectDetails params={params} searchParams={searchParams} />
+                </Suspense>
+            </div>
         </div>
     );
 }
@@ -29,10 +31,27 @@ async function ProjectDetails({ params, searchParams }: PageProps) {
 
     return (
         <div>
-            <h2>Welcome to Project View Page!</h2>
-            <h3>Project: {slug}</h3>
-            <p>Description: {description ?? "No description provided"}</p>
-            <p>Stars: {stars ?? "0"}</p>
+            <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">
+                Welcome to Project View Page!
+            </h2>
+            <h3 className="mt-2 text-lg font-medium text-slate-700">
+                Project: <span className="text-indigo-600">{slug}</span>
+            </h3>
+
+            <dl className="mt-6 space-y-4">
+                <div>
+                    <dt className="text-sm font-medium text-slate-500">Description</dt>
+                    <dd className="mt-1 text-slate-800">
+                        {description ?? "No description provided"}
+                    </dd>
+                </div>
+                <div>
+                    <dt className="text-sm font-medium text-slate-500">Stars</dt>
+                    <dd className="mt-1 inline-flex items-center rounded-full bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700">
+                        ⭐ {stars ?? "0"}
+                    </dd>
+                </div>
+            </dl>
         </div>
     );
 }

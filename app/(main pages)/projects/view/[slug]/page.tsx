@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import BackButton from "@/components/BackButton";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Project View",
@@ -28,7 +29,8 @@ export default function ProjectView({ params, searchParams }: PageProps) {
 async function ProjectDetails({ params, searchParams }: PageProps) {
   const { slug } = await params;
   const { description, stars } = await searchParams;
-  await new Promise<void>((resolve) => setTimeout(resolve, 3000));
+//   if (slug === "not-found") notFound(); // simulate a not found scenario for testing
+  await new Promise<void>((resolve) => setTimeout(resolve, 3000)); // simulate a loading delay for testing
 
   return (
     <div>

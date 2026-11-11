@@ -29,8 +29,9 @@ export default function ProjectView({ params, searchParams }: PageProps) {
 async function ProjectDetails({ params, searchParams }: PageProps) {
   const { slug } = await params;
   const { description, stars } = await searchParams;
-//   if (slug === "not-found") notFound(); // simulate a not found scenario for testing
   await new Promise<void>((resolve) => setTimeout(resolve, 3000)); // simulate a loading delay for testing
+  if (slug === "not-found") notFound(); // simulate a not found scenario for testing
+  if (slug === "error") throw new Error("Simulated error"); // simulate an error scenario for testing
 
   return (
     <div>

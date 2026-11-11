@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import BackButton from "@/components/BackButton";
 import ProjectCard from "@/components/ProjectCard"
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description: "Browse our projects.",
+};
 
 export default function Projects() {
 

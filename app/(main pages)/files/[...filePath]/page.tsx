@@ -1,4 +1,10 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Files",
+  description: "Browse files.",
+};
 
 type FilePageProps = {
     params: Promise<{ filePath: string[] }>;

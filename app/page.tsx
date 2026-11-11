@@ -1,5 +1,11 @@
 "use client";
 import { useState } from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Welcome to our homepage.",
+};
 
 export default function Home() {
   const [count,setCount] = useState(0);

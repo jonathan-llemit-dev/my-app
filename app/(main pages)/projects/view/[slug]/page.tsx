@@ -1,5 +1,11 @@
 import { Suspense } from "react";
 import BackButton from "@/components/BackButton";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Project View",
+  description: "View project details.",
+};
 
 type PageProps = {
     params: Promise<{ slug: string }>;

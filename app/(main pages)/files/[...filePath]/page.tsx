@@ -12,7 +12,7 @@ type FilePageProps = {
 
 export default function FilePage({ params }: FilePageProps) {
     return (
-        <Suspense fallback={<p>Loading files...</p>}>
+        <Suspense fallback={<p className="text-muted">Loading files...</p>}>
             <FileInfo params={params} />
         </Suspense>
     );
@@ -22,9 +22,9 @@ async function FileInfo({ params }: FilePageProps) {
     const { filePath } = await params;
 
     return (
-        <div>
-            <p>Actual params: {filePath.join(", ")}</p>
-            <p>Path: {filePath.join(" / ")}</p>
+        <div className="space-y-2">
+            <p className="text-foreground">Actual params: {filePath.join(", ")}</p>
+            <p className="text-muted">Path: {filePath.join(" / ")}</p>
         </div>
     );
 }

@@ -26,26 +26,28 @@ export default function Timer() {
   const clock = `${minutes}:${String(remainder).padStart(2, "0")}`;
 
   return (
-    <div className="mt-4">
-      <p className="text-lg font-semibold" aria-live="polite">
+    <div className="mt-4 space-y-3">
+      <p className="text-lg font-semibold text-foreground" aria-live="polite">
         Timer: {clock}
       </p>
-      <button
-        onClick={() => setIsRunning((running) => !running)}
-        className={`mt-2 mr-2 rounded px-4 py-2 text-white ${
-          isRunning
-            ? "bg-blue-500 hover:bg-blue-600"
-            : "bg-green-500 hover:bg-green-600"
-        }`}
-      >
-        {isRunning ? "Pause" : "Start"}
-      </button>
-      <button
-        onClick={handleReset}
-        className="mt-2 rounded px-4 py-2 text-white bg-red-500 hover:bg-red-600"
-      >
-        Reset
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={() => setIsRunning((running) => !running)}
+          className={`rounded-md px-4 py-2 text-white transition-colors ${
+            isRunning
+              ? "bg-primary hover:bg-primary-hover"
+              : "bg-secondary hover:bg-secondary-hover"
+          }`}
+        >
+          {isRunning ? "Pause" : "Start"}
+        </button>
+        <button
+          onClick={handleReset}
+          className="mt-2 rounded-md bg-danger px-4 py-2 text-danger-fg hover:bg-danger-hover transition-colors"
+        >
+          Reset
+        </button>
+      </div>
     </div>
   );
 }

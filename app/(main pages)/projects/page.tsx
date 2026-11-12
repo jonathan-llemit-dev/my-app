@@ -46,8 +46,8 @@ export default function Projects() {
       <div className="mx-auto max-w-6xl">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white-900 md:text-4xl">Projects</h1>
-            <p className="mt-2 text-white-600">
+            <h1 className="text-3xl font-bold text-foreground md:text-4xl">Projects</h1>
+            <p className="mt-2 text-muted">
               Browse our curated collection of {projects.length} learning projects.
             </p>
           </div>

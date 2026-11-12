@@ -23,7 +23,9 @@ export default function RootLayout({
         <Suspense fallback={<div>Loading navigation...</div>}>
           <Navbar name="Jonathan" />
         </Suspense>
-        <main className="mx-auto max-w-6xl p-6">{children}</main> {/* ← WRAP children */}
+        <main className="mx-auto max-w-6xl p-6 text-foreground">
+            {children}
+          </main> {/* ← WRAP children */}
       </body>
     </html>
   );

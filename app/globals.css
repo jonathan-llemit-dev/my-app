@@ -1,30 +1,136 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   Design Tokens (CSS Custom Properties)
+   These variables are the single source of truth for colors, radii, and
+   semantic surface tokens. Tailwind v4 reads them via the `@theme` block
+   below, so you can use them with utility classes like `bg-background`,
+   `text-foreground`, `border-border`, etc.
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #0070f3;
-  --secondary: #1c1c1e;
+  /* ---- Surfaces ---- */
+  --background: #f8fafc; /* page background (light) */
+  --card: #ffffff; /* card/elevated surface (light) */
+
+  /* ---- Text ---- */
+  --foreground: #0f172a; /* primary body text (light) */
+  --muted: #64748b; /* secondary/descrīptive text (light) */
+
+  /* ---- Brand ---- */
+  --primary: #4f46e5; /* brand primary (indigo-600) */
+  --primary-hover: #4338ca; /* indigo-700 */
+  --primary-fg: #ffffff; /* text on top of primary */
+
+  --secondary: #7c3aed; /* brand secondary (violet-600) */
+  --secondary-hover: #6d28d9; /* violet-700 */
+
+  /* ---- Accent / Highlights ---- */
+  --accent: #f59e0b; /* amber-500 — stars, badges, warnings */
+  --accent-fg: #7c2d12; /* text on top of accent */
+
+  /* ---- Danger / Destructive ---- */
+  --danger: #ef4444; /* red-500 — delete, destructive actions */
+  --danger-hover: #dc2626; /* red-600 */
+  --danger-fg: #ffffff; /* text on top of danger */
+
+  /* ---- Borders & Rings ---- */
+  --border: #e2e8f0; /* card/text separators (light) */
+  --ring: #c7d2fe; /* focus ring glow (light) */
+
+  /* ---- Radius ---- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* ---- Dark mode (auto, via prefers-color-scheme) ---- */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b1120; /* deep navy background */
+    --card: #1e293b; /* card/elevated surface (dark) */
+
+    --foreground: #e2e8f0; /* primary body text (dark) */
+    --muted: #94a3b8; /* secondary text (dark) */
+
+    --primary: #818cf8; /* brand primary (indigo-400) */
+    --primary-hover: #6366f1; /* indigo-500 */
+    --primary-fg: #0f172a;
+
+    --secondary: #a78bfa; /* violet-400 */
+    --secondary-hover: #8b5cf6; /* violet-500 */
+
+    --accent: #fbbf24; /* amber-400 */
+    --accent-fg: #451a03;
+
+    --danger: #f87171; /* red-400 */
+    --danger-hover: #ef4444; /* red-500 */
+    --danger-fg: #0f172a;
+
+    --border: #334155; /* borders (dark) */
+    --ring: #4f46e5; /* focus ring (dark) */
   }
 }
+
+/* ==========================================================================
+   Tailwind v4 theme registration
+   Mapping CSS variables → Tailwind utility tokens. Anything prefixed with
+   `--color-` becomes a palette you can use as `bg-*`, `text-*`,
+   `border-*`, `ring-*`. `--font-*` registers font families.
+   ========================================================================== */
+
+@theme inline {
+  /* Surfaces */
+  --color-background: var(--background);
+  --color-card: var(--card);
+
+  /* Text */
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+
+  /* Brand */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-fg: var(--primary-fg);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+
+  /* Accent */
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+
+  /* Danger / Destructive */
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-fg: var(--danger-fg);
+
+  /* Borders & Rings */
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Border radius scale */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-full: var(--radius-full);
+}
+
+/* ==========================================================================
+   Base element styles
+   ========================================================================== */
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

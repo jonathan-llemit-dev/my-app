@@ -4,9 +4,11 @@ export default function Layout({
   children: React.ReactNode
 }) {
   return (
-    <div>
-      <h1>Dashboard Layout</h1>
-      {children}
+    <div className="space-y-4 p-6">
+      <h1 className="text-2xl font-bold text-foreground">Dashboard Layout</h1>
+      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+        {children}
+      </div>
     </div>
   );
 }

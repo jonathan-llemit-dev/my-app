@@ -4,8 +4,15 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Suspense } from "react";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "My App",
@@ -24,8 +31,8 @@ export default function RootLayout({
           <Navbar name="Jonathan" />
         </Suspense>
         <main className="mx-auto max-w-6xl p-6 text-foreground">
-            {children}
-          </main> {/* ← WRAP children */}
+          {children}
+        </main>
       </body>
     </html>
   );

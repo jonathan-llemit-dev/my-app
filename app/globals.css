@@ -139,4 +139,8 @@ body {
   .page-heading {
     @apply text-3xl font-bold text-foreground;
   }
+
+  .contact-heading {
+    font-family: var(--font-contact-heading), serif;
+  }
 }

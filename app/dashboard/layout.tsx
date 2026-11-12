@@ -5,7 +5,7 @@ export default function Layout({
 }) {
   return (
     <div className="space-y-4 p-6">
-      <h1 className="text-2xl font-bold text-foreground">Dashboard Layout</h1>
+      <h1 className="page-heading">Dashboard Layout</h1>
       <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
         {children}
       </div>

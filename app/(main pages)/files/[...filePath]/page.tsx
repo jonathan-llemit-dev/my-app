@@ -22,7 +22,8 @@ async function FileInfo({ params }: FilePageProps) {
     const { filePath } = await params;
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-4">
+            <h1 className="page-heading">Files</h1>
             <p className="text-foreground">Actual params: {filePath.join(", ")}</p>
             <p className="text-muted">Path: {filePath.join(" / ")}</p>
         </div>

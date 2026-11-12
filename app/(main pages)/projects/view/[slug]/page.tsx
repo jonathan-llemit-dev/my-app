@@ -51,7 +51,7 @@ async function ProjectDetails({ params, searchParams }: PageProps) {
         </div>
         <div>
           <dt className="text-sm font-medium text-muted">Stars</dt>
-          <dd className="mt-1 inline-flex items-center rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent-fg">
+          <dd className="mt-1 inline-flex items-center rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-foreground">
             ⭐ {stars ?? "0"}
           </dd>
         </div>

@@ -42,11 +42,11 @@ const projects = [
 
 export default function Projects() {
   return (
-    <div className="p-6 md:p-10">
+    <div className="space-y-4">
       <div className="mx-auto max-w-6xl">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground md:text-4xl">Projects</h1>
+            <h1 className="page-heading">Projects</h1>
             <p className="mt-2 text-muted">
               Browse our curated collection of {projects.length} learning projects.
             </p>

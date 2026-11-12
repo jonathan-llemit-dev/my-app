@@ -134,3 +134,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@layer components {
+  .page-heading {
+    @apply text-3xl font-bold text-foreground;
+  }
+}

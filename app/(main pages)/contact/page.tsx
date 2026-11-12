@@ -17,7 +17,37 @@ export default function Contact() {
   return (
     <div className={`${playfairDisplay.variable} space-y-4`}>
       <h1 className="page-heading contact-heading">Contact</h1>
-      <p className="mt-2 text-muted">This is the contact page. It uses another font for the heading.</p>
+      <p className="mt-2 text-muted">
+        This page demonstrates isolated font usage: a custom decorative heading, plus
+        monospace styling for technical details.
+      </p>
+
+      <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+        <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted">
+          Quick info
+        </p>
+        <dl className="mt-3 space-y-2 text-sm text-foreground">
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-muted">Email</dt>
+            <dd className="font-mono text-right">hello@example.com</dd>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-muted">Response time</dt>
+            <dd className="font-mono text-right">24h</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+        <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted">
+          System status
+        </p>
+        <div className="mt-3 space-y-2 text-sm text-foreground">
+          <p className="font-mono">Status: ONLINE</p>
+          <p className="font-mono">Region: ap-southeast-1</p>
+          <p className="font-mono">Last sync: 13:42 UTC</p>
+        </div>
+      </div>
     </div>
   );
 }

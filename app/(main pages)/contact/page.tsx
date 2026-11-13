@@ -17,9 +17,13 @@ export default function Contact() {
   return (
     <div className={`${playfairDisplay.variable} space-y-4`}>
       <h1 className="page-heading contact-heading">Contact</h1>
-      <p className="mt-2 text-muted">
+      <p className="mt-2 font-semibold text-muted">
         This page demonstrates isolated font usage: a custom decorative heading, plus
         monospace styling for technical details.
+      </p>
+
+      <p className="contact-heading text-xl font-medium text-foreground">
+        This line uses the custom heading font with a different weight.
       </p>
 
       <div className="rounded-xl border border-border bg-card p-4 shadow-sm">

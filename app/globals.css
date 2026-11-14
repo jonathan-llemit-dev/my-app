@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Tell Tailwind that `dark:` means "inside an element with .dark" */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ==========================================================================
    Design Tokens (CSS Custom Properties)
    These variables are the single source of truth for colors, radii, and
@@ -10,33 +13,49 @@
 
 :root {
   /* ---- Surfaces ---- */
-  --background: #f8fafc; /* page background (light) */
-  --card: #ffffff; /* card/elevated surface (light) */
+  --background: #f8fafc;
+  /* page background (light) */
+  --card: #ffffff;
+  /* card/elevated surface (light) */
 
   /* ---- Text ---- */
-  --foreground: #0f172a; /* primary body text (light) */
-  --muted: #64748b; /* secondary/descrīptive text (light) */
+  --foreground: #0f172a;
+  /* primary body text (light) */
+  --muted: #64748b;
+  /* secondary/descrīptive text (light) */
 
   /* ---- Brand ---- */
-  --primary: #4f46e5; /* brand primary (indigo-600) */
-  --primary-hover: #4338ca; /* indigo-700 */
-  --primary-fg: #ffffff; /* text on top of primary */
+  --primary: #4f46e5;
+  /* brand primary (indigo-600) */
+  --primary-hover: #4338ca;
+  /* indigo-700 */
+  --primary-fg: #ffffff;
+  /* text on top of primary */
 
-  --secondary: #7c3aed; /* brand secondary (violet-600) */
-  --secondary-hover: #6d28d9; /* violet-700 */
+  --secondary: #7c3aed;
+  /* brand secondary (violet-600) */
+  --secondary-hover: #6d28d9;
+  /* violet-700 */
 
   /* ---- Accent / Highlights ---- */
-  --accent: #f59e0b; /* amber-500 — stars, badges, warnings */
-  --accent-fg: #7c2d12; /* text on top of accent */
+  --accent: #f59e0b;
+  /* amber-500 — stars, badges, warnings */
+  --accent-fg: #7c2d12;
+  /* text on top of accent */
 
   /* ---- Danger / Destructive ---- */
-  --danger: #ef4444; /* red-500 — delete, destructive actions */
-  --danger-hover: #dc2626; /* red-600 */
-  --danger-fg: #ffffff; /* text on top of danger */
+  --danger: #ef4444;
+  /* red-500 — delete, destructive actions */
+  --danger-hover: #dc2626;
+  /* red-600 */
+  --danger-fg: #ffffff;
+  /* text on top of danger */
 
   /* ---- Borders & Rings ---- */
-  --border: #e2e8f0; /* card/text separators (light) */
-  --ring: #c7d2fe; /* focus ring glow (light) */
+  --border: #e2e8f0;
+  /* card/text separators (light) */
+  --ring: #c7d2fe;
+  /* focus ring glow (light) */
 
   /* ---- Radius ---- */
   --radius-sm: 0.25rem;
@@ -46,32 +65,42 @@
   --radius-full: 9999px;
 }
 
-/* ---- Dark mode (auto, via prefers-color-scheme) ---- */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b1120; /* deep navy background */
-    --card: #1e293b; /* card/elevated surface (dark) */
+.dark {
+  --background: #0b1120;
+  /* deep navy background */
+  --card: #1e293b;
+  /* card/elevated surface (dark) */
 
-    --foreground: #e2e8f0; /* primary body text (dark) */
-    --muted: #94a3b8; /* secondary text (dark) */
+  --foreground: #e2e8f0;
+  /* primary body text (dark) */
+  --muted: #94a3b8;
+  /* secondary text (dark) */
 
-    --primary: #818cf8; /* brand primary (indigo-400) */
-    --primary-hover: #6366f1; /* indigo-500 */
-    --primary-fg: #0f172a;
+  --primary: #818cf8;
+  /* brand primary (indigo-400) */
+  --primary-hover: #6366f1;
+  /* indigo-500 */
+  --primary-fg: #0f172a;
 
-    --secondary: #a78bfa; /* violet-400 */
-    --secondary-hover: #8b5cf6; /* violet-500 */
+  --secondary: #a78bfa;
+  /* violet-400 */
+  --secondary-hover: #8b5cf6;
+  /* violet-500 */
 
-    --accent: #fbbf24; /* amber-400 */
-    --accent-fg: #451a03;
+  --accent: #fbbf24;
+  /* amber-400 */
+  --accent-fg: #451a03;
 
-    --danger: #f87171; /* red-400 */
-    --danger-hover: #ef4444; /* red-500 */
-    --danger-fg: #0f172a;
+  --danger: #f87171;
+  /* red-400 */
+  --danger-hover: #ef4444;
+  /* red-500 */
+  --danger-fg: #0f172a;
 
-    --border: #334155; /* borders (dark) */
-    --ring: #4f46e5; /* focus ring (dark) */
-  }
+  --border: #334155;
+  /* borders (dark) */
+  --ring: #4f46e5;
+  /* focus ring (dark) */
 }
 
 /* ==========================================================================
@@ -142,5 +171,11 @@ body {
 
   .contact-heading {
     font-family: var(--font-contact-heading), serif;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
   }
 }

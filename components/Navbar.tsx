@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { ThemeToggle } from "./theme-toggle";
 
 type NavbarProps = {
   name?: string;
@@ -35,34 +36,38 @@ export default function Navbar({ name }: NavbarProps) {
         </Link>
 
         {/* 6. Desktop navigation */}
-        <ul className="hidden gap-6 md:flex">
-          {links.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={
-                    isActive
-                      ? "text-sm font-medium text-primary"
-                      : "text-sm font-medium text-muted hover:text-primary"
-                  }
-                >
-                  {link.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        <div className="flex items-center gap-6">
+          <ul className="hidden items-center gap-6 md:flex">
+            {links.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={
+                      isActive
+                        ? "text-sm font-medium text-primary"
+                        : "text-sm font-medium text-muted hover:text-primary"
+                    }
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
 
-        {/* 7. Mobile menu button */}
-        <button
-          onClick={() => setOpen(!open)}
-          className="rounded p-2 text-muted hover:bg-border md:hidden"
-          aria-label="Toggle menu"
-        >
-          {open ? "✕" : "☰"}
-        </button>
+          <ThemeToggle />
+
+          {/* 7. Mobile menu button */}
+          <button
+            onClick={() => setOpen(!open)}
+            className="rounded p-2 text-muted hover:bg-border md:hidden"
+            aria-label="Toggle menu"
+          >
+            {open ? "✕" : "☰"}
+          </button>
+        </div>
       </div>
 
       {/* 8. Mobile menu (only shows when open) */}

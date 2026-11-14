@@ -36,6 +36,8 @@
   /* brand secondary (violet-600) */
   --secondary-hover: #6d28d9;
   /* violet-700 */
+  --secondary-fg: #ffffff;
+  /* text on top of secondary */
 
   /* ---- Accent / Highlights ---- */
   --accent: #f59e0b;
@@ -79,6 +81,8 @@
   /* violet-400 */
   --secondary-hover: #8b5cf6;
   /* violet-500 */
+  --secondary-fg: #0f172a;
+  /* text on top of secondary (light text would fail contrast here) */
 
   --accent: #fbbf24;
   /* amber-400 */
@@ -119,6 +123,7 @@
 
   --color-secondary: var(--secondary);
   --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-fg: var(--secondary-fg);
 
   /* Accent */
   --color-accent: var(--accent);

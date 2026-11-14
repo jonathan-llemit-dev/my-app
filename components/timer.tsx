@@ -27,23 +27,28 @@ export default function Timer() {
 
   return (
     <div className="mt-4 space-y-3">
-      <p className="text-lg font-semibold text-foreground" aria-live="polite">
+      {/* role="timer" carries aria-live="off" by default. A live region here
+          would otherwise announce the clock on every single tick. */}
+      <p role="timer" className="text-lg font-semibold text-foreground">
         Timer: {clock}
       </p>
+
       <div className="flex gap-2">
         <button
+          type="button"
           onClick={() => setIsRunning((running) => !running)}
-          className={`rounded-md px-4 py-2 text-white transition-colors ${
+          className={`rounded-md px-4 py-2 transition-colors ${
             isRunning
-              ? "bg-primary hover:bg-primary-hover"
-              : "bg-secondary hover:bg-secondary-hover"
+              ? "bg-primary text-primary-fg hover:bg-primary-hover"
+              : "bg-secondary text-secondary-fg hover:bg-secondary-hover"
           }`}
         >
           {isRunning ? "Pause" : "Start"}
         </button>
         <button
+          type="button"
           onClick={handleReset}
-          className="mt-2 rounded-md bg-danger px-4 py-2 text-danger-fg hover:bg-danger-hover transition-colors"
+          className="rounded-md bg-danger px-4 py-2 text-danger-fg transition-colors hover:bg-danger-hover"
         >
           Reset
         </button>

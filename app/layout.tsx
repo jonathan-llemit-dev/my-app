@@ -30,9 +30,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Font variables belong on <html> so Tailwind's `--default-font-family`
+  // (which Preflight sets on <html>) resolves to Geist for the whole document.
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

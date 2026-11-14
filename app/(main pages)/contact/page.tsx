@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Playfair_Display } from "next/font/google";
 
+// Deliberately page-scoped: a custom font used by a single route. Next injects
+// its @font-face CSS into this route's chunk only, so no other page downloads
+// Playfair — and `--font-contact-heading` exists only inside this page's tree.
 const playfairDisplay = Playfair_Display({
   variable: "--font-contact-heading",
   subsets: ["latin"],

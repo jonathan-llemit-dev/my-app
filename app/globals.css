@@ -56,13 +56,6 @@
   /* card/text separators (light) */
   --ring: #c7d2fe;
   /* focus ring glow (light) */
-
-  /* ---- Radius ---- */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-full: 9999px;
 }
 
 .dark {
@@ -143,13 +136,19 @@
   /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
 
-  /* Border radius scale */
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
-  --radius-full: var(--radius-full);
+/* Radius scale: plain values that never change with the theme, so they are
+   declared here directly instead of being routed through :root (a
+   `--radius-sm: var(--radius-sm)` mapping is a self-reference — it only
+   worked because unlayered :root happened to win the cascade).
+   The sizes are unchanged. `rounded-full` needs no token: Tailwind falls
+   back to its built-in `calc(infinity * 1px)`, the same pill shape. */
+@theme {
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
 }
 
 /* ==========================================================================

@@ -15,8 +15,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Page titles compose with this template: a page exporting "About Us"
+// becomes "About Us | My App". The root page itself uses `default`.
 export const metadata: Metadata = {
-  title: "My App",
+  title: {
+    default: "My App",
+    template: "%s | My App",
+  },
   description: "My Next.js app",
 };
 

@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link";
 
 type ProjectCardProps = {
@@ -8,7 +6,7 @@ type ProjectCardProps = {
     href: string;
 };
 
-export default function ProjectCard({ title, description, href} : ProjectCardProps) {
+export default function ProjectCard({ title, description, href }: ProjectCardProps) {
 
     return (
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md">

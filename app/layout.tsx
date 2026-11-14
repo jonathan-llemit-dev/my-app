@@ -37,7 +37,7 @@ export default function RootLayout({
           <Suspense fallback={<div>Loading navigation...</div>}>
             <Navbar name="Jonathan" />
           </Suspense>
-          <main className="mx-auto max-w-6xl p-6 text-foreground">
+          <main className="mx-auto max-w-6xl p-6">
             {children}
           </main>
         </ThemeProvider>

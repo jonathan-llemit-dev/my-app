@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Counter from "@/components/Counter";
+import Modal from "@/components/Modal";
+import ProductDetails from "@/components/ProductDetails";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -12,6 +14,10 @@ export default function Home() {
       <h1 className="page-heading">Welcome to Home</h1>
       <p className="mt-2 text-muted">This is the homepage.</p>
       <Counter />
+
+      <Modal>
+        <ProductDetails productId={1} />
+      </Modal>
     </div>
   );
 }

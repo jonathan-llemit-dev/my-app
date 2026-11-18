@@ -16,6 +16,7 @@ const links = [
   { href: "/projects", label: "Projects" },
   { href: "/contact", label: "Contact" },
   { href: "/files/users/documents/reports", label: "Files" },
+  { href: "/products", label: "Products" },
 ];
 
 // A link is active on its own page and on every page nested below it:

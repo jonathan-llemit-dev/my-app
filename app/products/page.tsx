@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import BackButton from "@/components/BackButton";
 import ProductCard from "@/components/ProductCard";
 
@@ -50,7 +51,13 @@ export default async function Products() {
 
                 <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {products.map((product) => (
-                        <ProductCard key={product.id} {...product} />
+                        <Link
+                            key={product.id}
+                            href={`/products/${product.id}`}
+                            className="block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        >
+                            <ProductCard {...product} />
+                        </Link>
                     ))}
                 </div>
 

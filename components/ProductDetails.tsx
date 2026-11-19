@@ -10,14 +10,10 @@ interface Product {
     rating: { rate: number; count: number };
 }
 
-interface ProductDetailsProps {
-    productId: number;
-}
-
-async function getProduct(id: number): Promise<Product> {
-    // `no-store` keeps this request uncached, so the component streams from the
-    // API on every request. The response is quick, which is why this component
-    // is the "fast" half of the Suspense demo.
+// `no-store` keeps this request uncached, so the component streams from the
+// API on every request. The response is quick, which is why this is the "fast"
+// half of the data on the product pages.
+export async function getProduct(id: number): Promise<Product> {
     const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
         cache: "no-store",
     });
@@ -33,9 +29,13 @@ async function getProduct(id: number): Promise<Product> {
     return JSON.parse(body) as Product;
 }
 
-export default async function ProductDetails({ productId }: ProductDetailsProps) {
-    const product = await getProduct(productId);
+interface ProductDetailsViewProps {
+    product: Product;
+}
 
+// Presentational half, so a page that already fetched the data (for example the
+// loading.tsx demo page) can render it without fetching a second time.
+export function ProductDetailsView({ product }: ProductDetailsViewProps) {
     return (
         <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <img
@@ -61,6 +61,16 @@ export default async function ProductDetails({ productId }: ProductDetailsProps)
             <p className="mt-4 text-muted">{product.description}</p>
         </article>
     );
+}
+
+interface ProductDetailsProps {
+    productId: number;
+}
+
+// Async data-fetching wrapper used by the Suspense demo page and the homepage.
+export default async function ProductDetails({ productId }: ProductDetailsProps) {
+    const product = await getProduct(productId);
+    return <ProductDetailsView product={product} />;
 }
 
 export function ProductDetailsSkeleton() {

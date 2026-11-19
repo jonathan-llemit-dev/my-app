@@ -1,9 +1,13 @@
+import { notFound } from "next/navigation";
+
 interface Product {
     id: number;
     title: string;
     price: number;
     description: string;
+    category: string;
     image: string;
+    rating: { rate: number; count: number };
 }
 
 interface ProductDetailsProps {
@@ -11,19 +15,74 @@ interface ProductDetailsProps {
 }
 
 async function getProduct(id: number): Promise<Product> {
-    const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-    return res.json();
+    // `no-store` keeps this request uncached, so the component streams from the
+    // API on every request. The response is quick, which is why this component
+    // is the "fast" half of the Suspense demo.
+    const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
+        cache: "no-store",
+    });
+
+    if (!res.ok) {
+        throw new Error(`Failed to fetch product ${id}`);
+    }
+
+    // Fake Store API answers unknown ids with an empty body instead of a 404.
+    const body = await res.text();
+    if (!body) notFound();
+
+    return JSON.parse(body) as Product;
 }
 
-export default async function ProductDetails({productId} : ProductDetailsProps) {
+export default async function ProductDetails({ productId }: ProductDetailsProps) {
     const product = await getProduct(productId);
 
     return (
-        <div className="max-w-md mx-auto mt-8 p-6 bg-foreground rounded-lg shadow-md">
-            <img src={product.image} alt={product.title} className="w-full h-48 object-cover rounded-t-lg mb-4" />
-            <h2 className="text-2xl font-semibold text-primary-fg mb-2">{product.title}</h2>
-            <p className="text-gray-900 font-medium mb-2">${product.price}</p>
-            <p className="text-gray-600">{product.description}</p>
+        <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
+            <img
+                src={product.image}
+                alt={product.title}
+                className="mx-auto h-56 w-full max-w-xs object-contain"
+            />
+
+            <span className="mt-4 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-foreground">
+                {product.category}
+            </span>
+
+            <h2 className="mt-3 text-2xl font-semibold text-foreground">{product.title}</h2>
+
+            <p className="mt-2 text-sm text-muted">
+                ⭐ {product.rating.rate} · {product.rating.count} reviews
+            </p>
+
+            <p className="mt-3 text-3xl font-bold text-foreground">
+                ${product.price.toFixed(2)}
+            </p>
+
+            <p className="mt-4 text-muted">{product.description}</p>
+        </article>
+    );
+}
+
+export function ProductDetailsSkeleton() {
+    return (
+        <div
+            aria-busy="true"
+            aria-live="polite"
+            className="animate-pulse rounded-xl border border-border bg-card p-6 shadow-sm"
+        >
+            <span className="sr-only">Loading product details…</span>
+
+            <div className="mx-auto h-56 w-full max-w-xs rounded bg-border" />
+            <div className="mt-4 h-6 w-28 rounded-full bg-border" />
+            <div className="mt-3 h-8 w-3/4 rounded bg-border" />
+            <div className="mt-2 h-4 w-40 rounded bg-border" />
+            <div className="mt-3 h-9 w-32 rounded bg-border" />
+
+            <div className="mt-4 space-y-2">
+                <div className="h-4 w-full rounded bg-border" />
+                <div className="h-4 w-full rounded bg-border" />
+                <div className="h-4 w-5/6 rounded bg-border" />
+            </div>
         </div>
     );
 }

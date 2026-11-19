@@ -17,6 +17,12 @@ interface Product {
 
 async function getProducts(): Promise<Product[]> {
     console.time("Fetching products");
+    // force-cache is used here to cache the response for faster subsequent requests
+    // In a real-world application, you might want to use a more sophisticated caching strategy
+    // such as SWR or React Query for client-side caching and revalidation.
+    // Note: In Next.js 13+, you can also use the built-in caching mechanisms provided by the framework.
+    // For example, you can use the `revalidate` option in the `fetch` function to specify how often the data should be revalidated.
+    // no-cache can be used to always fetch fresh data, but it may result in slower response times.
     const res = await fetch("https://fakestoreapi.com/products", { cache: "force-cache" });
     console.timeEnd("Fetching products");
 

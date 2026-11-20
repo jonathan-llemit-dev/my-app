@@ -19,6 +19,7 @@ const links = [
   { href: "/products", label: "Products" },
   { href: "/products-loading/1", label: "Loading Demo" },
   { href: "/products-combined/1", label: "Combined" },
+  { href: "/revalidation", label: "Revalidation" },
 ];
 
 // A link is active on its own page and on every page nested below it:
@@ -48,7 +49,7 @@ export default function Navbar({ name }: NavbarProps) {
 
         {/* 6. Desktop navigation */}
         <div className="flex items-center gap-6">
-          <ul className="hidden items-center gap-6 md:flex">
+          <ul className="hidden items-center gap-6 lg:flex">
             {links.map((link) => {
               const isActive = isActiveLink(pathname, link.href);
               return (
@@ -74,7 +75,7 @@ export default function Navbar({ name }: NavbarProps) {
           {/* 7. Mobile menu button */}
           <button
             onClick={() => setOpen(!open)}
-            className="rounded p-2 text-muted hover:bg-border md:hidden"
+            className="rounded p-2 text-muted hover:bg-border lg:hidden"
             aria-label="Toggle menu"
           >
             {open ? "✕" : "☰"}
@@ -84,7 +85,7 @@ export default function Navbar({ name }: NavbarProps) {
 
       {/* 8. Mobile menu (only shows when open) */}
       {open && (
-        <div className="border-t border-border bg-card md:hidden">
+        <div className="border-t border-border bg-card lg:hidden">
           <ul className="flex flex-col px-4 py-2">
             {links.map((link) => {
               const isActive = isActiveLink(pathname, link.href);

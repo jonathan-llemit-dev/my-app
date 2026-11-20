@@ -54,8 +54,9 @@ export default async function RevalidationPage() {
                 <h1 className="page-heading">Revalidation</h1>
                 <p className="mt-2 text-muted">
                     The product list below is cached for 60 seconds. Reload within that
-                    minute and the cached time stays the same; after that, the next request
-                    rebuilds it in the background.
+                    minute and the cached time stays the same. After the minute, the first
+                    reload still shows the cached copy while a fresh one is built in the
+                    background; reload once more to see the new time.
                 </p>
             </header>
 
@@ -105,8 +106,9 @@ export default async function RevalidationPage() {
                         {"cacheLife({ revalidate: 60 })"}
                     </code>
                     <p className="mt-2 text-sm text-muted">
-                        Once the cached copy is older than 60 seconds, the next request
-                        serves it and refreshes it in the background.
+                        This is stale-while-revalidate: after 60 seconds the next request
+                        serves the cached copy and rebuilds it in the background, so the
+                        new time appears on the request after that.
                     </p>
                 </article>
 

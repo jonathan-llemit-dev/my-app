@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { cacheLife } from "next/cache";
 import { refreshCatalog } from "./actions";
 
@@ -139,6 +140,18 @@ export default async function RevalidationPage() {
                     as used by the data function on this page.
                 </p>
             </aside>
+
+            <p className="text-sm text-muted">
+                For a version that tags its caches and invalidates them after a
+                mutation, see the{" "}
+                <Link
+                    href="/revalidation/production"
+                    className="font-medium text-primary hover:underline"
+                >
+                    production-grade example
+                </Link>
+                .
+            </p>
         </div>
     );
 }

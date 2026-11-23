@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 interface Product {
@@ -38,11 +39,15 @@ interface ProductDetailsViewProps {
 export function ProductDetailsView({ product }: ProductDetailsViewProps) {
     return (
         <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
-            <img
-                src={product.image}
-                alt={product.title}
-                className="mx-auto h-56 w-full max-w-xs object-contain"
-            />
+            <div className="relative mx-auto h-56 w-full max-w-xs">
+                <Image
+                    src={product.image}
+                    alt={product.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 320px"
+                    className="object-contain"
+                />
+            </div>
 
             <span className="mt-4 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-foreground">
                 {product.category}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import FeaturedProductForm from "./FeaturedProductForm";
@@ -103,11 +104,15 @@ async function FeaturedProductSection() {
                 <p className="text-xs font-medium uppercase tracking-wide text-muted">
                     Featured product
                 </p>
-                <img
-                    src={featured.image}
-                    alt={featured.title}
-                    className="mx-auto mt-4 h-40 w-full max-w-48 object-contain"
-                />
+                <div className="relative mx-auto mt-4 h-40 w-full max-w-48">
+                    <Image
+                        src={featured.image}
+                        alt={featured.title}
+                        fill
+                        sizes="192px"
+                        className="object-contain"
+                    />
+                </div>
                 <h2 className="mt-4 text-xl font-semibold text-foreground">
                     {featured.title}
                 </h2>

@@ -49,7 +49,7 @@ granularity *visible* instead of theoretical.
 
 | File | Was | Now |
 |---|---|---|
-| `components/TimeStamp.tsx` | `setState` inside an effect → **lint error** under React 19 rules | `suppressHydrationWarning` on a prerendered timestamp, no effect |
+| `components/TimeStamp.tsx` | `setState` inside an effect → **lint error** under React 19 rules | `useSyncExternalStore` with a server snapshot: no effect, no render-time clock read (see §4.7) |
 | `components/ProductCard.tsx` | raw `<img>`, unused `id` binding | `next/image` with `fill` + `sizes`, no unused binding |
 | `components/ProductDetails.tsx` | raw `<img>` | `next/image` with `fill` + `sizes` |
 | `app/revalidation/production/page.tsx` | raw `<img>` | `next/image` with `fill` + `sizes` |
@@ -58,9 +58,10 @@ granularity *visible* instead of theoretical.
 | `app/error.tsx` | missing | root segment error boundary using `retry()` |
 | `app/global-error.tsx` | missing | root-layout-level boundary (own `<html>`, inline styles) |
 
-`npx tsc --noEmit` and `npm run lint` both pass. A `next build` could not be verified here
-because this environment has no network, and `/products` + `/revalidation` fetch
-`fakestoreapi.com` at prerender time. Run `npm run build` in your own terminal.
+`npx tsc --noEmit` and `npm run lint` both pass. `npm run build` is the check that
+actually catches prerender-time mistakes, and it lives in your terminal — this environment
+cannot fork the build workers (`spawn EPERM`). Your first build is what exposed the
+`TimeStamp` problem in §4.7, which lint had been perfectly happy with.
 
 ---
 
@@ -349,6 +350,58 @@ prerenders your fallback into the shell. Your three product routes are the best
 demonstration of the consequence: with `loading.tsx` only, the *entire* page waits for the
 slowest fetch; with inner `<Suspense>` boundaries, sections arrive independently.
 
+### 4.7 The clock is I/O
+
+This one deserves its own section because it cost this project a broken build.
+
+With Cache Components, Next patches `Date`, `Math.random`, and `crypto` in the server
+runtime for the duration of a build (`node_modules/next/dist/server/node-environment-extensions/`
+— `date.js`, `random.js`, `web-crypto.js`). Calling them while prerendering is treated as a
+side channel into the real world, exactly like a `fetch`, and aborts the prerender:
+
+```
+Error: Route "/": Next.js encountered the unstable value `new Date()` in a Client Component.
+This value would be evaluated during the prerender, instead of recomputed on each visit.
+```
+
+Note *where* it bites: inside a **Client Component's render**. Rendering a client component
+on the server is still rendering, so a `new Date()` in JSX is evaluated once at build time
+and frozen into the HTML.
+
+Now add React 19's rules and the trap closes from both sides:
+
+| Attempt | Verdict |
+|---|---|
+| `useEffect(() => setTime(new Date()), [])` | ❌ `react-hooks/set-state-in-effect` — synchronous setState in an effect body |
+| `{new Date().toLocaleTimeString()}` in JSX | ❌ build abort: unstable value during prerender |
+| `<Suspense>` around it | ✅ but the whole component becomes a dynamic hole — overkill for a label |
+| `useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)` | ✅ **use this** |
+
+```tsx
+let renderedAt: string | null = null;
+const subscribe = () => () => {};
+const getSnapshot = () => (renderedAt ??= new Date().toLocaleTimeString());
+const getServerSnapshot = () => "…";
+```
+
+Why it is airtight: React's **server** renderer implements `useSyncExternalStore` as
+`return getServerSnapshot()` and never calls `getSnapshot` (verified in
+`react-dom/cjs/react-dom-server.edge.development.js`). Prerendering therefore never reaches
+the clock; the browser does, after hydration, with no mismatch and no warning. The
+module-level cache matters — `getSnapshot` is re-read on every render, so a fresh string
+each time would loop forever.
+
+Two general lessons:
+
+- **`npm run build` is a different kind of check from `tsc` and `lint`.** Both were clean
+  while the build was broken. Prerender-time violations are only observable by prerendering.
+- **Any value that differs on every render is suspicious.** Time, random ids, and
+  `window`/`navigator` reads all need an explicit "server version" or a boundary. That is
+  the same reason `theme-toggle.tsx` uses `useSyncExternalStore`.
+
+Same trap, other shapes: `Math.random()` for a "random id" in a page, `crypto.randomUUID()`
+for keys, `Date.now()` for a cache-buster.
+
 ---
 
 ## 5. Chapters, in learning order
@@ -561,6 +614,52 @@ npm run dev               # dev server, output in .next/dev
 npm run build             # production build, output in .next
 npm run start             # production server
 ```
+
+`tsc` and `lint` cannot see prerender-time problems (§4.7). `npm run build` is the gate that
+actually matters, so run it before calling any page change done — not just before shipping.
+
+### Your build output, annotated
+
+This is your actual output. Read it left to right, symbol by symbol:
+
+```
+┌ ◐ /                                    ← shell static, ProductDetails streams in
+├ ○ /_not-found
+├ ○ /about  ○ /contact  ○ /dashboard  ○ /projects    ← zero data = fully static
+├ ƒ /api/students                        ← reads request.url → dynamic on every request
+├ ○ /api/subjects                        ← no request input → prerendered once
+├   /files/[...filePath]
+│ └ ◐ /files/[...filePath]               ← awaits unknown params → params stream
+├ ○ /products                            ← no Revalidate column: frozen at build
+├   /products/[id]
+│ └ ◐ /products/[id]                     ← same two-line shape for every dynamic route
+├   /projects/view/[slug]
+│ └ ◐ /projects/view/[slug]
+├ ○ /revalidation              1m      1y
+└ ○ /revalidation/production   1m      1h
+```
+
+| Symbol | Meaning | In your app |
+|---|---|---|
+| `○` Static | prerendered at build, served from cache | pages with no runtime data |
+| `◐` Partial Prerender | static shell + dynamic holes streamed per request | everything with `params` or an uncached read |
+| `ƒ` Dynamic | rendered on demand | `/api/students` |
+
+Four things worth noticing:
+
+1. **Every dynamic route shows twice.** The bare line is the route pattern; the indented `◐`
+   line is the prerendered entry. That duplication *is* PPR: there is a static artifact to
+   serve immediately and a dynamic part to fill in.
+2. **`/products` has no `Revalidate` column, and that is the point.** Those columns come from
+   `use cache` profiles. `/products` caches with `fetch(..., { cache: "force-cache" })`, which
+   is the pre-16 lever, so the route reports no profile — and it means the product list is
+   **frozen at build time forever**, until you redeploy. That is Chapter 6, exercise 1.
+3. **`/revalidation` shows `1m / 1y`** — `cacheLife({ revalidate: 60 })`, with `expire`
+   defaulting to "never" (rendered as 1y). `/revalidation/production` shows `1m / 1h` because
+   its two `use cache` scopes set `expire: 3600`; the route reports the tightest values.
+4. **The two `Fetching products` log lines** are two render passes, 27 ms then 0.95 ms. The
+   second was served from the fetch cache — that is `force-cache` doing its job, and the
+   cheapest possible demonstration that the cache is real.
 
 Things worth doing regularly:
 

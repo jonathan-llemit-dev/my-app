@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
-import { setFeaturedProduct } from "./actions";
 import type { Product } from "./data";
 
 function SubmitButton() {
@@ -20,20 +19,24 @@ function SubmitButton() {
     );
 }
 
-interface FeaturedProductFormProps {
+interface FeaturedProductPickerProps {
     products: Product[];
     currentId: number;
 }
 
-export default function FeaturedProductForm({
+// Note: this renders NO <form>. Its parent (FeaturedProductPanel / the section in
+// page.tsx) owns the form, because that form also has to wrap the featured card —
+// see FeaturedCardPending.tsx. The submit button below submits that ancestor form,
+// and `useFormStatus` reads it from here.
+export default function FeaturedProductPicker({
     products,
     currentId,
-}: FeaturedProductFormProps) {
+}: FeaturedProductPickerProps) {
     // Controlled, so the selected tile can be highlighted before submit.
     const [selectedId, setSelectedId] = useState(currentId);
 
     return (
-        <form action={setFeaturedProduct} className="mt-4 flex flex-col gap-4">
+        <div className="mt-4 flex flex-col gap-4">
             {/* A radiogroup rather than a <select>: the image is how you identify a
                 product, so choosing by picture beats reading truncated titles.
 
@@ -104,6 +107,6 @@ export default function FeaturedProductForm({
             </fieldset>
 
             <SubmitButton />
-        </form>
+        </div>
     );
 }

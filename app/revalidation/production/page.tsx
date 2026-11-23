@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import FeaturedProductForm from "./FeaturedProductForm";
+import { setFeaturedProduct } from "./actions";
+import FeaturedCardPending from "./FeaturedCardPending";
+import FeaturedProductPicker from "./FeaturedProductPicker";
 import {
     CATALOG_TAG,
     FEATURED_PRODUCT_TAG,
@@ -99,35 +101,48 @@ async function FeaturedProductSection() {
     ]);
 
     return (
+        // One <form> for the whole panel, and two reasons for that:
+        //
+        //  1. `useFormStatus` only reads the nearest ancestor form, so the featured
+        //     card (a sibling of the submit button) can show its skeleton while
+        //     the action is in flight — see FeaturedCardPending.
+        //  2. A <form action={serverAction}> also works before hydration, so the
+        //     picker stays usable without JavaScript.
+        //
         // `items-start` is load-bearing: the grid's default `items-stretch` would
         // force the shorter featured card to match the picker's height, which is
         // what produced the large empty gap at the bottom of the card.
-        <section className="grid items-start gap-6 lg:grid-cols-2">
+        <form
+            action={setFeaturedProduct}
+            className="grid items-start gap-6 lg:grid-cols-2"
+        >
             <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                    Featured product
-                </p>
-                <div className="relative mx-auto mt-4 h-40 w-full max-w-48">
-                    <Image
-                        src={featured.image}
-                        alt={featured.title}
-                        fill
-                        sizes="192px"
-                        className="object-contain"
-                    />
-                </div>
-                <h2 className="mt-4 text-xl font-semibold text-foreground">
-                    {featured.title}
-                </h2>
-                <p className="mt-1 text-sm text-muted">
-                    Product #{featured.id} · {featured.category}
-                </p>
-                <p className="mt-3 text-2xl font-bold text-foreground">
-                    ${featured.price.toFixed(2)}
-                </p>
-                <p className="mt-4 text-xs text-muted">
-                    Featured cache built at {featured.builtAt}
-                </p>
+                <FeaturedCardPending>
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted">
+                        Featured product
+                    </p>
+                    <div className="relative mx-auto mt-4 h-40 w-full max-w-48">
+                        <Image
+                            src={featured.image}
+                            alt={featured.title}
+                            fill
+                            sizes="192px"
+                            className="object-contain"
+                        />
+                    </div>
+                    <h2 className="mt-4 text-xl font-semibold text-foreground">
+                        {featured.title}
+                    </h2>
+                    <p className="mt-1 text-sm text-muted">
+                        Product #{featured.id} · {featured.category}
+                    </p>
+                    <p className="mt-3 text-2xl font-bold text-foreground">
+                        ${featured.price.toFixed(2)}
+                    </p>
+                    <p className="mt-4 text-xs text-muted">
+                        Featured cache built at {featured.builtAt}
+                    </p>
+                </FeaturedCardPending>
             </article>
 
             <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
@@ -142,7 +157,7 @@ async function FeaturedProductSection() {
                     . The same roundtrip re-renders this page with fresh data.
                 </p>
 
-                <FeaturedProductForm
+                <FeaturedProductPicker
                     products={catalog.products}
                     currentId={featured.id}
                 />
@@ -152,7 +167,7 @@ async function FeaturedProductSection() {
                     touch it.
                 </p>
             </article>
-        </section>
+        </form>
     );
 }
 

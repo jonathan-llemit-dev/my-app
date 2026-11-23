@@ -36,7 +36,7 @@ that pays off fastest.
 | Streaming, 3 variants | `app/products/[id]/`, `products-loading/[id]/`, `products-combined/[id]/` | manual `<Suspense>` vs `loading.tsx` vs both |
 | Caching | `app/revalidation/` | `use cache`, `cacheLife`, `revalidatePath` |
 | Tagged caches | `app/revalidation/production/` | `cacheTag`, `updateTag`, read-your-writes |
-| Mutations | `app/revalidation/*/actions.ts` + `FeaturedProductForm.tsx` | Server Actions, `useFormStatus`, form actions |
+| Mutations | `app/revalidation/*/actions.ts` + `FeaturedProductPicker.tsx` | Server Actions, `useFormStatus`, form actions |
 | Route handlers | `app/api/students/route.ts`, `app/api/subjects/route.ts` | `GET`, `NextRequest`, pruning/swallowing pitfalls |
 | Client islands | `Navbar`, `Counter`, `timer`, `Modal`, `BackButton`, `theme-toggle` | `"use client"` at the leaves |
 | Design system | `app/globals.css` | Tailwind v4 tokens + `@theme inline` + `next-themes` |
@@ -196,8 +196,8 @@ Legend: **✅** you demonstrate it · **🟡** partially / legacy idiom · **❌
 
 | Concept | | Where |
 |---|---|---|
-| Server Action + `<form action>` | ✅ | `FeaturedProductForm.tsx`, `revalidation/page.tsx` |
-| `useFormStatus` pending UI | ✅ | `FeaturedProductForm.tsx` |
+| Server Action + `<form action>` | ✅ | `FeaturedProductPicker.tsx`, `revalidation/page.tsx` |
+| `useFormStatus` pending UI | ✅ | `FeaturedProductPicker.tsx` |
 | Validate → write → invalidate order | ✅ | `production/actions.ts` |
 | `useActionState` (errors returned to client) | ❌ | the missing half of form UX |
 | `redirect()` after mutation | ❌ | POST/redirect/GET |
@@ -423,7 +423,7 @@ The optimizer's cache key is that **entire URL**, including `w` and `q`. So:
   plain `<img>` reused the browser's copy from the catalog page and felt instant.
 
 The fix is not to abandon `next/image` — it is to **warm the exact URL you are about to
-need**. `FeaturedProductForm.tsx` renders all eight catalog products as clickable thumbnails
+need**. `FeaturedProductPicker.tsx` renders all eight catalog products as clickable thumbnails
 at the featured card's size, so every candidate is already optimized before it can be
 chosen, and the swap after submitting is a cache hit. The thumbnails also make the picker
 usable — you choose a product by its picture instead of by its title.
@@ -559,8 +559,17 @@ read-your-writes). This is your strongest area already.
 **Idea.** A Server Action is a POST endpoint you can call from a form. The order is always
 **authorize → validate → write → invalidate**.
 
-**Where.** `production/actions.ts` already follows it. `FeaturedProductForm.tsx` shows
-`useFormStatus` for pending state.
+**Where.** `production/actions.ts` already follows it. `FeaturedProductPicker.tsx` shows
+`useFormStatus` for the button label, and `FeaturedCardPending.tsx` uses the same hook to
+swap the featured card for a skeleton while the action is in flight.
+
+That second one is the transferable trick: `useFormStatus` reads the **nearest ancestor
+`<form>`**, so a component can read the submit state only if a form *wraps* it — even when it
+is a sibling of the button rather than a descendant. That is why the whole panel in
+`page.tsx` is one `<form>` (`<form action={serverAction}>` also works before hydration), and
+why the picker renders no `<form>` of its own: nested forms are invalid HTML. The alternative
+is lifting pending state into a shared client parent, which drags the card's server-rendered
+markup into the client bundle just to show a skeleton.
 
 **Exercise.** Add `useActionState` to the form so invalid input renders an error message
 instead of throwing, and `redirect()` to a success URL. Then add a second action that

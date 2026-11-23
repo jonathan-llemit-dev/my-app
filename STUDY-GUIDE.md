@@ -223,7 +223,7 @@ Legend: **✅** you demonstrate it · **🟡** partially / legacy idiom · **❌
 |---|---|---|
 | `next/font` (global + page-scoped) | ✅ | `layout.tsx`, `contact/page.tsx` |
 | `next/image` | ✅ | now all four call sites |
-| `priority` / LCP images | ❌ | nothing marks an LCP image |
+| LCP image control (`loading`, `preload`) | ❌ | nothing marks an LCP image; `priority` is deprecated in 16 |
 | `next/script` | ❌ | third-party scripts |
 | `next/dynamic` / lazy Client Components | ❌ | `02-guides/lazy-loading.md` |
 | Prefetch control (`prefetch={true}`, `prefetch` segment) | ❌ | matters now that `partialPrefetching` is on |
@@ -402,6 +402,84 @@ Two general lessons:
 Same trap, other shapes: `Math.random()` for a "random id" in a page, `crypto.randomUUID()`
 for keys, `Date.now()` for a cache-buster.
 
+### 4.8 `next/image` has a cold-start cost
+
+Converting `<img>` to `<Image>` changed which URL the browser loads, and that bill arrives
+the first time each image is shown.
+
+```
+<img src>              browser ──→ fakestore CDN                    1 hop
+<Image> (optimized)    browser ──→ your server ──→ fakestore CDN    2 hops + resize
+                                   /_next/image?url=…&w=…&q=75
+```
+
+The optimizer's cache key is that **entire URL**, including `w` and `q`. So:
+
+- The first request for a given (image, width, quality) makes your server fetch the
+  original, decode it, re-encode it (WebP/AVIF), write it to cache, and only then respond.
+- After that it is served from cache. `minimumCacheTTL` defaults to **4 hours** in Next 16.
+- Consequence, which you hit directly: in `/revalidation/production` the featured image
+  changes on user action, so *every new choice* is a cold miss. Before the conversion a
+  plain `<img>` reused the browser's copy from the catalog page and felt instant.
+
+The fix is not to abandon `next/image` — it is to **warm the exact URL you are about to
+need**. `FeaturedProductForm.tsx` renders all eight catalog products as clickable thumbnails
+at the featured card's size, so every candidate is already optimized before it can be
+chosen, and the swap after submitting is a cache hit. The thumbnails also make the picker
+usable — you choose a product by its picture instead of by its title.
+
+If you warm with a different `sizes`, you get a *different* cache entry and nothing improves.
+That is the detail that makes or breaks this technique.
+
+#### When *not* to optimize
+
+`next/image` is a good default, not a rule. It buys **bytes, format, and layout stability**
+and charges **latency on the first request per (url, width, quality)**. For a static image
+set that charge is paid once per deployment and amortized over every visitor; for an image
+that changes on interaction it is paid every time, by the person interacting.
+
+| Situation | Choice | Why |
+|---|---|---|
+| Grid of images, hero, above the fold | `<Image>` + `sizes` | many requests amortize the cold cost; LCP and CLS win |
+| Static import (`import img from './x.png'`) | `<Image>` | content-hashed, `immutable` Cache-Control |
+| Image changes per interaction, known set | prewarm, or `<Image unoptimized>` | cold cost is paid per interaction |
+| SVG | `<img>` or `unoptimized` | already vector; optimizing adds nothing |
+| Animated GIF | `unoptimized` | the optimizer has no animation-preserving output |
+| Source smaller than a few KB | `unoptimized` | optimizer overhead exceeds the saving |
+| Image behind auth headers | `unoptimized` | the optimizer does not forward request headers |
+| Already exactly the rendered size, fast CDN | `<img>` is defensible | nothing left to win |
+
+That last column is why `@next/next/no-img-element` is a **warning, not an error**: it means
+"justify this", not "never do this".
+
+#### So which one is this?
+
+Three honest options for a per-interaction image, in order of increasing visibility to the
+user:
+
+1. **`unoptimized`** — one prop, back to the browser-cached CDN fetch, gives up the resize.
+   Simplest; correct when the image is small or already the right size.
+2. **Prewarm the pending choice** — render the about-to-be-chosen image invisibly at matching
+   `sizes`. Keeps optimization and changes no UI, but it is invisible, fragile (the `sizes`
+   must match exactly), and spends the budget where the user cannot see it. Use it when the
+   option set is too large to show.
+3. **Show the known set** (what the form now does) — thumbnails at the card's size. Warms
+   every candidate *and* improves the UI, at the cost of N requests instead of 1. For a
+   picker whose options are known in advance, this is usually the best trade, because the
+   budget is spent on something the user can see.
+
+The general principle: prewarming is not a hack, it is the same idea as `<link rel="preload">`
+or the `preload` prop. But a prewarm that exists only to make an invisible image feel instant
+is a signal that the image should either not be optimized, or be shown sooner. Prefer spending
+the budget on something visible.
+
+Two more things:
+
+- **`priority` is deprecated in Next 16** — use `preload={true}` for a known LCP image, and
+  `loading="eager"` for above-the-fold images that just need to skip lazy loading.
+- **Measure in `npm run build && npm start`.** `next dev` optimizes on demand as well and is
+  slower, so a dev-mode comparison exaggerates this cost.
+
 ---
 
 ## 5. Chapters, in learning order
@@ -531,9 +609,11 @@ the FOUT request.
 **Where.** All four images now use `next/image` with `fill` + `sizes`; fonts are on
 `<html>` with one page-scoped custom font on `/contact`.
 
-**Exercise.** Add `priority` to the first product card on `/products` (it is the LCP
-element) and measure with Lighthouse before/after. Then add a third-party script (e.g. an
-analytics snippet) with `next/script` and `strategy="afterInteractive"`.
+**Exercise.** Mark the first product card on `/products` as the LCP image and measure with
+Lighthouse before/after. Use `loading="eager"` and, if you want the `<head>` preload,
+`preload={true}` — **`priority` was deprecated in Next 16** in favour of `preload`. Then add
+a third-party script (e.g. an analytics snippet) with `next/script` and
+`strategy="afterInteractive"`.
 
 ### Chapter 12 — Client-side navigation APIs
 **Idea.** On the client you get `usePathname`, `useSearchParams`, `useParams`,

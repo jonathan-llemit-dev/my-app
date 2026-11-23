@@ -99,7 +99,10 @@ async function FeaturedProductSection() {
     ]);
 
     return (
-        <section className="grid gap-6 lg:grid-cols-2">
+        // `items-start` is load-bearing: the grid's default `items-stretch` would
+        // force the shorter featured card to match the picker's height, which is
+        // what produced the large empty gap at the bottom of the card.
+        <section className="grid items-start gap-6 lg:grid-cols-2">
             <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
                 <p className="text-xs font-medium uppercase tracking-wide text-muted">
                     Featured product
@@ -139,12 +142,10 @@ async function FeaturedProductSection() {
                     . The same roundtrip re-renders this page with fresh data.
                 </p>
 
-                <div className="mt-4">
-                    <FeaturedProductForm
-                        products={catalog.products}
-                        currentId={featured.id}
-                    />
-                </div>
+                <FeaturedProductForm
+                    products={catalog.products}
+                    currentId={featured.id}
+                />
 
                 <p className="mt-4 text-xs text-muted">
                     Catalog cache built at {catalog.builtAt} — this action does not
